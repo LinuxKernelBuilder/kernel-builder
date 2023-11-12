@@ -6,4 +6,4 @@ current_directory = os.getcwd()
 
 while True:
     subprocess.call([f'{current_directory}/script.sh'])
-    time.sleep(30)
+    time.sleep(5)

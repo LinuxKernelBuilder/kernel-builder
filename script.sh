@@ -11,7 +11,7 @@ echo "$current_time" >> time.txt
 sed -i '1d' time.txt
 
 
-git add *.txt create_file.sh get_latest_kernel.py script.sh
+git add *.txt create_file.sh get_latest_kernel.py script.sh time.py time.txt
 
 # 从time.txt文件中获取最后一行
 commit_message=$(tail -n 1 time.txt)
@@ -23,10 +23,9 @@ export GIT_EDITOR=true
 echo "$commit_message" | git commit -F - --no-edit
 
 # 推送提交到远程仓库
-git pull origin testing
+git pull 
 echo "$commit_message" | git commit -F - --no-edit
-git push origin testing
-
+git push 
 # 检查git命令的返回状态
 if [ $? -eq 0 ]; then
     echo "Git push successful."

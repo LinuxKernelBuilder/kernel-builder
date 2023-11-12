@@ -20,25 +20,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - name: Install curl and jq
+      - name: install dep
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl jq
-
-      - name: Update Kernel
-        id: update-kernel
-        run: |
-          latest_tag=$(curl -sS https://www.kernel.org/releases.json | jq -r '.latest_stable.version')
-          echo "Latest Linux Kernel version: $latest_tag"
-          echo "echo \"$latest_tag\" > temp_file.txt" >> create_file.sh
-          chmod +x create_file.sh
-          ./create_file.sh  # 执行脚本以创建临时文件1
-
-      - name: Rename File
-        run: |
-          latest_tag=$(cat temp_file.txt)
-          mv temp_file.txt "$latest_tag.txt"  # 将临时文件重命名为以版本号命名的文件
-
+          sudo apt-get install -y curl jq gpg python3-pyquery wget xz-utils make gcc flex bison dpkg-dev bc rsync kmod cpio libssl-dev git lsb vim libelf-dev neofetch python3-pip python3-tk debhelper
 
       - name: Build
         run: bash build_action.sh
@@ -50,16 +35,26 @@ jobs:
           name: artifact
           path: ${{ github.workspace }}/artifact/
           
+      - name: Compare files
+        id: compare
+        run: |
+          cmp --silent txt/longterm.txt /tmp/longterm.txt && cmp --silent txt/mainline.txt /tmp/mainline.txt && cmp --silent txt/stable.txt /tmp/stable.txt && echo "skip=true" >> $GITHUB_OUTPUT || echo "skip=false" >> $GITHUB_OUTPUT
       - name: Commit and Push Changes
-        if: steps.update-kernel.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        if: ${{ steps.compare.outputs.skip != 'true' }}
         run: |
           git config user.name "XXTXTOP"
           git config user.email "xxtxtop@gmail.com"
           ls -al
           pwd
-          #git add /*.txt
-          #git commit -m "Create file with kernel version"
-          #git push origin testing
-
+          cp /tmp/mainline.txt  txt/mainline.txt
+          cp /tmp/mainlineurl.txt txt/mainlineurl.txt
+          cp /tmp/stable.txt txt/stable.txt 
+          cp /tmp/stableurl.txt txt/stableurl.txt
+          cp /tmp/longterm.txt txt/longterm.txt
+          cp /tmp/longtermurl.txt txt/longtermurl.txt 
+          git pull
+          git add txt/
+          git commit -m "Create file with kernel version"
+          git push

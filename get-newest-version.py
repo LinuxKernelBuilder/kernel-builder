@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import sys
 import pyquery
 mainVersion = int(sys.argv[1])
@@ -22,10 +24,24 @@ for i in programVersionList(f"#releases tr :nth-child(4)").items():
         newestUrl = url
         break
     temp += 1
-print(newestVersion)
 
-print(newestUrl)
-with open("/tmp/kernelversion.txt", "w") as file:
-    file.write(newestVersion)
-with open("/tmp/kernelurl.txt", "w") as file:
-    file.write(newestUrl)
+
+print(f"Version:{newestVersion}")
+print(f"Url:{newestUrl}")
+
+
+if mainVersion == 0: # mainline 
+    with open("/tmp/mainline.txt", "w") as file:
+        file.write(newestVersion)
+    with open("/tmp/mainlineurl.txt", "w") as file:
+        file.write(newestUrl)
+elif mainVersion == 1: # stable
+    with open("/tmp/stable.txt", "w") as file:
+        file.write(newestVersion)
+    with open("/tmp/stableurl.txt", "w") as file:
+        file.write(newestUrl)
+elif mainVersion == 2: # longterm
+    with open("/tmp/longterm.txt", "w") as file:
+        file.write(newestVersion)
+    with open("/tmp/longtermurl.txt", "w") as file:
+        file.write(newestUrl)
