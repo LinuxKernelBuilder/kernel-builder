@@ -1,1 +1,1 @@
-https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.5.11.tar.xz
+https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.5.13.tar.xz
